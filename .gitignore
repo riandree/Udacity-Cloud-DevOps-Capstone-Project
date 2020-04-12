@@ -1,6 +1,8 @@
 # Ignore some MacOS related stuff
 .DS_Store
 
+node_modules/
+
 # Compiled class file
 *.class
 
