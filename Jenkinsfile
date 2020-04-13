@@ -29,7 +29,11 @@ pipeline {
             steps {
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
    //             echo 'Testing..'
-                sh 'cd frontend && yarn build' 
+                sh '''
+                cd frontend
+                yarn install 
+                yarn build
+                ''' 
    //             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
    //             junit '**/target/*.xml'     junit captures and associates the JUnit XML files matching the inclusion pattern (**/target/*.xml).  Pluigin notwendig
             }
