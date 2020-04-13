@@ -48,7 +48,7 @@ pipeline {
           withAWS(region:'eu-central-1',credentials:'aws-static') {
             sh 'echo "Uploading content with AWS credentials"'
             s3Upload(payloadSigningEnabled: true, 
-                     includePathPattern:'**/*', workingDir:'dist'
+                     includePathPattern:'**/*', workingDir:'dist',
                      bucket:'de.rieck.todoapp')
           }
         }
