@@ -40,9 +40,17 @@ pipeline {
         }
         stage('Docker') {
              steps {
-                 sh 'ls -la'
+                 sh 'pwd && ls -la'
                  sh 'cd frontend && ls -la'
              }
+        }
+        stage('Deploy Frontend') {
+          withAWS(region:'eu-central-1',credentials:'aws-static') {
+            sh 'echo "Uploading content with AWS credentials"'
+            s3Upload(payloadSigningEnabled: true, 
+                     includePathPattern:'**/*', workingDir:'dist'
+                     bucket:'de.rieck.todoapp')
+          }
         }
 //        stage('Deploy') {
 //            steps {
