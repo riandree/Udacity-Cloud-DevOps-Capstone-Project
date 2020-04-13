@@ -1,12 +1,26 @@
 pipeline {
   agent any
   stages {
-    stage('Build') {
-      steps {
-        sh '''echo "it works"
-'''
-      }
-    }
+        stage('Lint') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Unittest') {
+            steps {
+                echo 'Building..'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
 
   }
 }
