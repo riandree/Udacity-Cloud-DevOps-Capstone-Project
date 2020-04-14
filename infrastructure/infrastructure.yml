@@ -1,1 +1,35 @@
-# todo
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: |
+  Project for the Capstone Assignment of the Udacity Cloud DevOps nanodegree.!And 
+
+Resources:
+
+  StaticResourcesBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties: 
+        AccessControl: PublicRead
+        BucketName: 'de.rieck.todoapp'
+        WebsiteConfiguration:
+           IndexDocument: index.html
+           ErrorDocument: index.html
+
+  SampleBucketPolicy: 
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref StaticResourcesBucket
+      PolicyDocument: 
+        Statement: 
+           - 
+            Action: 
+               - "s3:GetObject"
+            Effect: "Allow"
+            Resource: 
+               Fn::Join: 
+                 - ""
+                 - 
+                   - "arn:aws:s3:::"
+                   - !Ref StaticResourcesBucket
+                   - "/*"
+            Principal: "*"
