@@ -10,32 +10,23 @@ pipeline {
   //              echo 'Testing..'
   //          }
   //      }
-  //      stage('Unittest') {
-  //          steps {
-  //              // Alternative zu Credentials im Environment
-  //              withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'jenkins-ssh-key-for-abc', \
-  //                                                           keyFileVariable: 'SSH_KEY_FOR_ABC')]) {
-  //                // 
-  //              }
-  //              echo 'Building..'
-  //          }
-  //      }
-        stage('Build') {
-            // when {
-            //  expression {
-            //    currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-            //  }
-            //}
+        stage('Frontend build') {
             steps {
-                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-   //             echo 'Testing..'
+                echo "Running frontend build with id ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 sh '''
-                cd frontend
-                yarn install 
-                yarn build   # this needs vue-cli to be available
+                  cd frontend
+                  yarn install 
+                  yarn build   # this needs vue-cli to be available
                 ''' 
-   //             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
-   //             junit '**/target/*.xml'     junit captures and associates the JUnit XML files matching the inclusion pattern (**/target/*.xml).  Pluigin notwendig
+            }
+        }
+        stage('Backend build') {
+            steps {
+                echo "Running backend build with id ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                sh '''
+                  cd backend
+                  mvn clean package
+                ''' 
             }
         }
         stage('Docker') {
