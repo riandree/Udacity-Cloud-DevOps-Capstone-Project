@@ -31,8 +31,15 @@ pipeline {
         }
         stage('Docker') {
              steps {
-                 sh 'pwd && ls -la'
-                 sh 'cd frontend && ls -la'
+                cd backend
+                docker build -t todoapp .
+                docker tag todoapp:latest 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
+                withAWS(region:'eu-central-1',credentials:'AWS-ECR-LOGIN') {
+                  sh 'echo "Logging into Amazon ECR"'
+                  def login = ecrLogin()
+                  sh ${login}
+                  docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
+                }
              }
         }
         stage('Deploy Frontend') {
