@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-        stage('Frontend build') {
+/*        stage('Frontend build') {
             steps {
                 echo "Running frontend build with id ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 sh '''
@@ -19,14 +19,16 @@ pipeline {
                   mvn clean package
                 ''' 
             }
-        }
+        } */
         stage('Docker') {
              steps {
                 sh '''
                   cd backend
                   docker build -t todoapp .
                   docker tag todoapp:latest 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
-                  aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp
+                  LOGIN=$(aws ecr get-login-password --region eu-central-1)
+                  echo $LOGIN
+                  docker login --username AWS --password "$LOGIN" 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp
                   docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
                 '''
               }
