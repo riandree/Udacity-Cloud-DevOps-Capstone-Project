@@ -8,6 +8,8 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "aws-amplify": "^3.0.7",
+    "aws-amplify-vue": "^2.1.1",
     "core-js": "^3.6.4",
     "element-ui": "^2.4.5",
     "vue": "^2.6.11",
