@@ -26,9 +26,7 @@ pipeline {
                   cd backend
                   docker build -t todoapp .
                   docker tag todoapp:latest 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
-                  LOGIN=$(aws ecr get-login-password --region eu-central-1)
-                  echo $LOGIN
-                  docker login --username AWS --password "$LOGIN" 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp
+                  aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp
                   docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
                 '''
               }
