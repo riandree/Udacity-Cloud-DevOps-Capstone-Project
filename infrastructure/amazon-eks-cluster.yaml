@@ -1,0 +1,35 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Amazon EKS for Todo App'
+
+Resources:
+  
+  K8SCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+        Name: prod  # ToDo RenameMe!
+        Version: '1.15'
+        RoleArn: !ImportValue ToDo-EksServiceRole-RoleArn
+        ResourcesVpcConfig:
+          SubnetIds:
+            - !ImportValue ToDoPublicSubnet01Export
+            - !ImportValue ToDoPublicSubnet02Export
+            - !ImportValue ToDoPrivateSubnet01Export
+            - !ImportValue ToDoPrivateSubnet02Export
+
+  K8SClusterNodegroup:
+    Type: 'AWS::EKS::Nodegroup'
+    DependsOn: K8SCluster
+    Properties:
+      ClusterName: prod  # ToDo RenameMe!
+      NodeRole: !ImportValue ToDo-NodeInstanceRole-RoleArn
+      ScalingConfig:
+        MinSize: 2
+        DesiredSize: 3
+        MaxSize: 3
+      Labels:
+        Type: EKS-Clusternode
+        App: Todo-Webapp
+      Subnets:
+        - !ImportValue ToDoPrivateSubnet01Export
+        - !ImportValue ToDoPrivateSubnet02Export

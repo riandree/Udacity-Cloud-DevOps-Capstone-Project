@@ -7,7 +7,7 @@ Resources:
 
   StaticResourcesBucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties: 
         AccessControl: PublicRead
         BucketName: 'de.rieck.todoapp'
@@ -33,3 +33,69 @@ Resources:
                    - !Ref StaticResourcesBucket
                    - "/*"
             Principal: "*"
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties: 
+      AutoVerifiedAttributes: 
+        - email
+      EmailVerificationMessage: "Please use the Verification Code {####} to verfiy you new Account."
+      EmailVerificationSubject: "Welcome to ToDo-App. Verification of new Account."
+      UserPoolName: UserPool4ToDoApplication
+
+  ToDoAppUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties: 
+      ClientName: ToDoApplicationClient
+      GenerateSecret: False
+      UserPoolId: !Ref CognitoUserPool
+
+  # This is the Role EKS needs in order to create the Resources for new K8S Clusters
+  eksServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - eks.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+
+  # This is the role the K8S worker nodes need to talk to the control plane and to pull images from ecr etc.
+  NodeInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy"
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+      Path: /
+
+Outputs:
+
+  RoleArn:
+    Description: The role that Amazon EKS will use to create AWS resources for Kubernetes clusters
+    Value: !GetAtt eksServiceRole.Arn
+    Export:
+      Name: ToDo-EksServiceRole-RoleArn
+
+  NodeInstanceRole:
+    Description: The node instance role
+    Value: !GetAtt NodeInstanceRole.Arn
+    Export:
+      Name: ToDo-NodeInstanceRole-RoleArn
+
