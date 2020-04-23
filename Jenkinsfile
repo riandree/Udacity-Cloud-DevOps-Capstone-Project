@@ -40,7 +40,7 @@ pipeline {
                     script {
                         def login = ecrLogin()
                         sh '''
-                           ${login}
+                           echo ${login}
                            docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
                         '''
                     }
