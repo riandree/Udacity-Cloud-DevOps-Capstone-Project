@@ -10,7 +10,7 @@ pipeline {
                   yarn build   # this needs vue-cli to be available
                 ''' 
             }
-        }
+        }*/
         stage('Backend build') {
             steps {
                 echo "Running backend build with id ${env.BUILD_ID} on ${env.JENKINS_URL}"
@@ -19,7 +19,7 @@ pipeline {
                   mvn clean package
                 ''' 
             }
-        } */
+        }
         stage('Docker') {
              steps {
                 sh '''
@@ -33,15 +33,16 @@ pipeline {
                 '''
               }
         }
-        stage('Deploy Frontend') {
-          steps {
-             withAWS(region:'eu-central-1',credentials:'aws-static') {
-               sh 'echo "Uploading content with AWS credentials"'
-               s3Upload(payloadSigningEnabled: true, 
-                     includePathPattern:'**/*', workingDir:'frontend/dist',
-                     bucket:'de.rieck.todoapp')
-             }
-          }   
-        }
+//        stage('Deploy Frontend') {
+//          steps {
+//             withAWS(region:'eu-central-1',credentials:'aws-static') {
+//               sh 'echo "Uploading content with AWS credentials"'
+//               s3Upload(payloadSigningEnabled: true, 
+//                     includePathPattern:'**/*', workingDir:'frontend/dist',
+//                     bucket:'de.rieck.todoapp')
+//             }
+//          }  
+//        }
   }
+
 }
