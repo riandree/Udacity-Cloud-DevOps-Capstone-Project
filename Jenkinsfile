@@ -1,15 +1,6 @@
 pipeline {
   agent any
-  //environment {
-  //      AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
-  //      AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
-  //}
   stages {
-  //      stage('xLint') {
-  //          steps {
-  //              echo 'Testing..'
-  //          }
-  //      }
         stage('Frontend build') {
             steps {
                 echo "Running frontend build with id ${env.BUILD_ID} on ${env.JENKINS_URL}"
@@ -35,17 +26,10 @@ pipeline {
                   cd backend
                   docker build -t todoapp .
                   docker tag todoapp:latest 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
+                  aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp
+                  docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
                 '''
-                withAWS(region:'eu-central-1',credentials:'aws-static') {
-                    script {
-                        def login = ecrLogin()
-                        sh '''
-                           echo ${login}
-                           docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:latest
-                        '''
-                    }
-                }
-             }
+              }
         }
         stage('Deploy Frontend') {
           steps {
@@ -57,10 +41,5 @@ pipeline {
              }
           }   
         }
-//        stage('Deploy') {
-//            steps {
-//                echo 'Deploying....'
-//            }
-//        }
   }
 }
