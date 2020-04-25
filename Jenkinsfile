@@ -10,6 +10,7 @@ pipeline {
                   yarn build   # this needs vue-cli to be available
                 ''' 
             }
+        }
         stage('Backend build') {
             steps {
                 echo "Running backend build with id ${env.BUILD_ID} on ${env.JENKINS_URL}"
@@ -51,5 +52,4 @@ pipeline {
           }  
         }
   }
-
 }
