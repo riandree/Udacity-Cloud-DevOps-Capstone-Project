@@ -25,9 +25,9 @@ pipeline {
                 sh '''
                   cd backend
                   docker build -t todoapp .
-                  docker tag todoapp:latest 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:${env.BUILD_ID}
+                  docker tag todoapp:latest 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:${BUILD_ID}
                   aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp
-                  docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:${env.BUILD_ID}
+                  docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:${BUILD_ID}
                 '''
               }
         }
@@ -35,7 +35,7 @@ pipeline {
           steps {
             sh '''
                cd k8s
-               cat deployment.yml | sed --expression='s/##SIGNING_KEY##/todo/g' | sed --expression='s/##VERSION##/${env.BUILD_ID}/g' > deploy.yml
+               cat deployment.yml | sed --expression='s/##SIGNING_KEY##/todo/g' | sed --expression='s/##VERSION##/${BUILD_ID}/g' > deploy.yml
                cat deploy.yml
                kubectl apply -f deploy.yml 
             '''
