@@ -1,6 +1,8 @@
 # Ignore some MacOS related stuff
 .DS_Store
 
+.idea/
+
 node_modules/
 frontend/dist/
 
