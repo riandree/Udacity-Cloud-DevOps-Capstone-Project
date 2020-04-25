@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: todo-app-deployment-jwtSecret
+type: Opaque
+data:
+  jwtSigningKey: ##SIGNING_KEY##
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app-deployment
+  labels:
+    app: todo
+    stage: test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: todoapp
+      stage: test
+  template:
+    metadata:
+      labels:
+        app: todoapp
+        stage: test
+    spec:
+      containers:
+        - name: todo
+          image: 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:##VERSION##
+          volumeMounts:
+            - name: jwtSecretVol
+              mountPath: "/etc/secrets"
+              readOnly: true
+          ports:
+            - containerPort: 8080
+              name: http
+      volumes:
+        - name: jwtSecretVol
+          secret:
+            secretName: todo-app-deployment-jwtSecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-service
+spec:
+  selector:
+    app: todoapp
+    stage: test
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: http
+  type: LoadBalancer
