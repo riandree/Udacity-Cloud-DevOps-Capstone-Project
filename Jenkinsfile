@@ -35,7 +35,7 @@ pipeline {
           steps {
             sh '''
                cd k8s
-               cat deployment.yml | sed --expression='s/##SIGNING_KEY##/todo/g' | sed --expression='s/##VERSION##/${BUILD_ID}/g' > deploy.yml
+               cat deployment.yml | sed --expression='s/##SIGNING_KEY##/todo/g' | sed --expression="s/##VERSION##/${BUILD_ID}/g" > deploy.yml
                cat deploy.yml
                kubectl apply -f deploy.yml 
             '''

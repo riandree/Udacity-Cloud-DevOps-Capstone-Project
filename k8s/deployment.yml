@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: todo-app-deployment-jwtSecret
+  name: todo-app-deployment-jwtsecret
 type: Opaque
 data:
   jwtSigningKey: ##SIGNING_KEY##
@@ -29,16 +29,16 @@ spec:
         - name: todo
           image: 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:##VERSION##
           volumeMounts:
-            - name: jwtSecretVol
+            - name: jwt-secret-vol
               mountPath: "/etc/secrets"
               readOnly: true
           ports:
             - containerPort: 8080
               name: http
       volumes:
-        - name: jwtSecretVol
+        - name: jwt-secret-vol
           secret:
-            secretName: todo-app-deployment-jwtSecret
+            secretName: todo-app-deployment-jwtsecret
 ---
 apiVersion: v1
 kind: Service
