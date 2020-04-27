@@ -6,6 +6,7 @@ pipeline {
                 echo "Running frontend build with id ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 sh '''
                   cd frontend
+                  cp src/staging/prod.js src/staging/config.js # Make client point to 'production' environment
                   yarn install 
                   yarn build   # this needs vue-cli to be available
                 ''' 
