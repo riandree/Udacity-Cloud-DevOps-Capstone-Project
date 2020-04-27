@@ -18,6 +18,7 @@
     import HelloWorld from './components/HelloWorld.vue';
     import {AmplifyEventBus, components} from 'aws-amplify-vue';
     import axios from 'axios';
+    import config from './staging/config';
 
     export default {
         name: 'app',
@@ -43,7 +44,7 @@
               axios({
                 method: 'get',
                 url: '/api/v1/hello',
-                baseURL: 'http://localhost:8080'
+                baseURL: config.baseURL
               }). then((result) => {
                 console.log(result);
               })

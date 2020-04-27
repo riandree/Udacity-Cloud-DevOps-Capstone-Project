@@ -3,17 +3,13 @@ import App from './App.vue';
 import router from './router';
 import './plugins/element.js';
 import axios from 'axios';
-
 import Amplify, * as AmplifyModules from 'aws-amplify'
 import {AmplifyEventBus, AmplifyPlugin} from 'aws-amplify-vue'
+import config from './staging/config'
 
-Amplify.configure({
-    Auth: {
-        region: 'eu-central-1',
-        userPoolId: 'eu-central-1_wr3AourNH',
-        userPoolWebClientId: '6gi7km51i3jou67q1j5pdenavv'
-    }
-});
+console.log(JSON.stringify(config));
+console.log(JSON.stringify(config.amplifyAuth));
+Amplify.configure({ Auth: config.amplifyAuth });
 
 Vue.use(AmplifyPlugin, AmplifyModules)
 
