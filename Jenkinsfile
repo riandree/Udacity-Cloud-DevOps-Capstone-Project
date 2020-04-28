@@ -48,7 +48,7 @@ pipeline {
                sh 'echo "Uploading content with AWS credentials"'
                s3Upload(payloadSigningEnabled: true, 
                      includePathPattern:'**/*', workingDir:'frontend/dist',
-                     bucket:'de.rieck.todoapp')
+                     bucket:'www.andrerieck.de')
              }
           }  
         }

@@ -10,7 +10,7 @@ Resources:
     DeletionPolicy: Delete
     Properties: 
         AccessControl: PublicRead
-        BucketName: 'de.rieck.todoapp'
+        BucketName: 'www.andrerieck.de'
         WebsiteConfiguration:
            IndexDocument: index.html
            ErrorDocument: index.html
