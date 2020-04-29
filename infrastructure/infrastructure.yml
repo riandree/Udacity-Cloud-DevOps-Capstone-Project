@@ -5,9 +5,30 @@ Description: |
 
 Resources:
 
+  ToDoDynamoDbTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: TodoObjects
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: 
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "owner"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "id"
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        -  IndexName: TodoByUser
+           KeySchema: 
+             - AttributeName: "owner"
+               KeyType: "HASH"
+           Projection: 
+             ProjectionType: ALL
+  
   StaticResourcesBucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy: Delete
+    DeletionPolicy: Retain
     Properties: 
         AccessControl: PublicRead
         BucketName: 'www.andrerieck.de'
