@@ -40,10 +40,15 @@ public class ToDoModel {
         return Objects.hash(id);
     }
 
-    public static Map<String, AttributeValue> queryByOwnerDBMap(String owner) {
-        HashMap<String, AttributeValue> attrValues = new HashMap<>();
-        attrValues.put("owner", AttributeValue.builder().s(owner).build());
-        return attrValues;
+    @Override
+    public String toString() {
+        return "ToDoModel{" +
+                "id='" + id + '\'' +
+                ", headline='" + headline + '\'' +
+                ", shortDesc='" + shortDesc + '\'' +
+                ", owner='" + owner + '\'' +
+                ", items=" + items +
+                '}';
     }
 
     public Map<String, AttributeValue> toDBMap(final ObjectMapper mapper) {

@@ -36,6 +36,15 @@ public class ToDoItem {
         return Objects.hash(seq, checked, name);
     }
 
+    @Override
+    public String toString() {
+        return "ToDoItem{" +
+                "seq=" + seq +
+                ", checked=" + checked +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public String toJSONString(ObjectMapper mapper) {
         ObjectNode node = mapper.createObjectNode();
         node.put("seq", seq);
