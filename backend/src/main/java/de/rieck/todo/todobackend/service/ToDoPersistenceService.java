@@ -24,7 +24,11 @@ public class ToDoPersistenceService {
         return toDoModel;
     }
 
-    public void deleteById(String id) {
+    public void deleteByIdAndOwner(String id, String owner) {
+        if (!getToDosByOwner(owner).stream().filter(todo -> todo.getId().equals(id)).findFirst().isPresent()) {
+            throw new IllegalStateException("Invalid ID for ToDo");
+        }
+
         HashMap<String, AttributeValue> keyToDelete = new HashMap<>();
         keyToDelete.put("id", AttributeValue.builder()
                 .s(id)
@@ -63,8 +67,16 @@ public class ToDoPersistenceService {
                 .collect(Collectors.toList());
     }
 
-    public void updateToDo(ToDoModel todo) {
-        dynamoDbClient.putItem(mkPutItemRequest(todo));
+    public void updateToDo(ToDoModel model, String owner) {
+        Optional<ToDoModel> current = getToDosByOwner(owner).stream().filter(todo -> todo.getId().equals(model.getId())).findFirst();
+        if (!current.isPresent()) {
+            throw new IllegalStateException("ToDo to update not found");
+        }
+        if (!current.get().getOwner().equals(owner)) {
+            throw new IllegalStateException("owners doesn't match");
+        }
+
+        dynamoDbClient.putItem(mkPutItemRequest(model));
     }
 
     private PutItemRequest mkPutItemRequest(ToDoModel toDoModel) {
