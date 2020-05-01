@@ -24,8 +24,8 @@ AmplifyEventBus.$on('authState', info => {
     console.log(`Here is the auth event that was just emitted by an Amplify component: ${info}`)
     if (info === 'signedIn') {
         vue.$Amplify.Auth.currentSession().then(session => {
-            console.log(session.idToken.jwtToken);
             axios.defaults.headers.common['Authorization'] = `Bearer ${session.idToken.jwtToken}`;
+            console.log(axios.defaults.headers.common['Authorization']);
         })
     } else if (info === 'signedOut') {
         axios.defaults.headers.common['Authorization'] = undefined;

@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController()
 @RequestMapping(path = "/api/v1/todo")
-@CrossOrigin(origins = {"*"}, allowCredentials = "true", allowedHeaders = {"*"})
 public class ToDoController {
 
     @Autowired
