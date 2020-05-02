@@ -1,11 +1,3 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: todo-app-deployment-jwtsecret
-type: Opaque
-data:
-  jwtSigningKey: ##SIGNING_KEY##
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,6 +24,11 @@ spec:
             - name: jwt-secret-vol
               mountPath: "/etc/secrets"
               readOnly: true
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: ##AWS_ACCESS_KEY_ID##
+            - name: AWS_SECRET_ACCESS_KEY
+              value: ##AWS_SECRET_ACCESS_KEY##
           ports:
             - containerPort: 8080
               name: http
