@@ -56,6 +56,7 @@ pipeline {
                  cp deploy.yml deploy2.yml
                  pwd
                  whoami
+                 aws --region eu-central-1 eks get-token --cluster-name prod
                  kubectl config current-context
                  kubectl config view
                  kubectl apply -f deploy.yml 
