@@ -21,6 +21,14 @@ pipeline {
                 ''' 
             }
         }
+        stage('lint Docker') {
+          steps {
+            sh '''
+              cd backend
+              docker run --rm -i hadolint/hadolint < Dockerfile
+            '''
+          }
+        }
         stage('Docker') {
              steps {
                 sh '''
