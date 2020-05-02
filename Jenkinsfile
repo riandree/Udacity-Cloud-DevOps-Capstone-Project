@@ -53,7 +53,11 @@ pipeline {
                  cat deployment.yml | sed --expression="s/##VERSION##/${BUILD_ID}/g" |\
                                       sed --expression="s/##AWS_ACCESS_KEY_ID##/${AWS_ACCESS_KEY_ID}/g" |\
                                       sed --expression="s/##AWS_SECRET_ACCESS_KEY##/${AWS_SECRET_ACCESS_KEY}/g" > deploy.yml
-                 cat deploy.yml
+                 cp deploy.yml deploy2.yml
+                 pwd
+                 whoami
+                 kubectl config current-context
+                 kubectl config view
                  kubectl apply -f deploy.yml 
                 '''
              }
