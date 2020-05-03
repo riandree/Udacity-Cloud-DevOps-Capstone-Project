@@ -52,7 +52,6 @@ pipeline {
                  secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
               ]]) {
                 sh '''
-                 kubectl cluster-info 
                  cd k8s
                  cat deployment.yml | sed --expression="s/##VERSION##/${BUILD_ID}/g" |\
                                       sed --expression="s/##AWS_ACCESS_KEY_ID##/${AWS_ACCESS_KEY_ID}/g" |\
