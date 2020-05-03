@@ -144,6 +144,8 @@
         min-width: 80%;
     } 
     
+    div[data-test="forgot-password-section"] > div:nth-child(1),
+    div[data-test="sign-up--section"] > div:nth-child(1),
     div[data-test="sign-out-section"] > div:nth-child(1) {
         margin-bottom: 2.5em;
     } 
