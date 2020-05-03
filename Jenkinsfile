@@ -37,6 +37,7 @@ pipeline {
                   docker tag todoapp:latest 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:${BUILD_ID}
                   aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp
                   docker push 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:${BUILD_ID}
+                  kubectl cluster-info
                 '''
               }
         }
@@ -49,6 +50,7 @@ pipeline {
                  secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                ]]) {
                 sh '''
+                 kubectl cluster-info 
                  cd k8s
                  cat deployment.yml | sed --expression="s/##VERSION##/${BUILD_ID}/g" |\
                                       sed --expression="s/##AWS_ACCESS_KEY_ID##/${AWS_ACCESS_KEY_ID}/g" |\

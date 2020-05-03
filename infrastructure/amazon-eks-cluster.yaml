@@ -7,8 +7,8 @@ Resources:
   K8SCluster:
     Type: AWS::EKS::Cluster
     Properties:
-        Name: prod  # ToDo RenameMe!
-        Version: '1.15'
+        Name: todoapp
+        Version: '1.16'
         RoleArn: !ImportValue ToDo-EksServiceRole-RoleArn
         ResourcesVpcConfig:
           SubnetIds:
@@ -21,7 +21,7 @@ Resources:
     Type: 'AWS::EKS::Nodegroup'
     DependsOn: K8SCluster
     Properties:
-      ClusterName: prod  # ToDo RenameMe!
+      ClusterName: todoapp
       NodeRole: !ImportValue ToDo-NodeInstanceRole-RoleArn
       ScalingConfig:
         MinSize: 2
