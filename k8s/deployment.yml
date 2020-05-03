@@ -20,10 +20,6 @@ spec:
       containers:
         - name: todo
           image: 277642653139.dkr.ecr.eu-central-1.amazonaws.com/todoapp:##VERSION##
-          volumeMounts:
-            - name: jwt-secret-vol
-              mountPath: "/etc/secrets"
-              readOnly: true
           env:
             - name: AWS_ACCESS_KEY_ID
               value: ##AWS_ACCESS_KEY_ID##
