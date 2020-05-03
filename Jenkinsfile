@@ -43,27 +43,27 @@ pipeline {
         }
         stage('rolling deploy Backend') {
           steps {
-               withCredentials([[
+               // AmazonWebServicesCredentialsBinding has issues when embedding calls to kubectl ... so
+               // merging the configuration is done in a separate step
+              withCredentials([[
                  $class: 'AmazonWebServicesCredentialsBinding',
                  credentialsId: 'ToDoDynamoDBFullAccess',
                  accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                  secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-               ]]) {
+              ]]) {
                 sh '''
                  kubectl cluster-info 
                  cd k8s
                  cat deployment.yml | sed --expression="s/##VERSION##/${BUILD_ID}/g" |\
                                       sed --expression="s/##AWS_ACCESS_KEY_ID##/${AWS_ACCESS_KEY_ID}/g" |\
                                       sed --expression="s/##AWS_SECRET_ACCESS_KEY##/${AWS_SECRET_ACCESS_KEY}/g" > deploy.yml
-                 cp deploy.yml deploy2.yml
-                 pwd
-                 whoami
-                 aws --region eu-central-1 eks get-token --cluster-name prod
-                 kubectl config current-context
-                 kubectl config view
-                 kubectl apply -f deploy.yml 
                 '''
              }
+             sh '''
+                 kubectl cluster-info 
+                 cd k8s
+                 kubectl apply -f deploy.yml 
+             '''
            }  
         }
         stage('Deploy Frontend') {
