@@ -32,10 +32,6 @@ spec:
           ports:
             - containerPort: 8080
               name: http
-      volumes:
-        - name: jwt-secret-vol
-          secret:
-            secretName: todo-app-deployment-jwtsecret
 ---
 apiVersion: v1
 kind: Service
