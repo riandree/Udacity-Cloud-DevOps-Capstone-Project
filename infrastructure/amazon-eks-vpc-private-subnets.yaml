@@ -1,13 +1,13 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Amazon EKS Sample VPC - Private and Public subnets'
+Description: 'Creates the VPS for the ToDo App'
 
 Parameters:
 
   VpcBlock:
     Type: String
     Default: 192.168.0.0/16
-    Description: The CIDR range for the VPC. This should be a valid private (RFC 1918) CIDR range.
+    Description: The CIDR range for the VPC. 
 
   PublicSubnet01Block:
     Type: String
@@ -29,20 +29,9 @@ Parameters:
     Default: 192.168.192.0/18
     Description: CidrBlock for private subnet 02 within the VPC
 
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      -
-        Label:
-          default: "Worker Network Configuration"
-        Parameters:
-          - VpcBlock
-          - PublicSubnet01Block
-          - PublicSubnet02Block
-          - PrivateSubnet01Block
-          - PrivateSubnet02Block
-
 Resources:
+
+  # The VPC where the ToDo app will be hosted
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -53,6 +42,7 @@ Resources:
       - Key: Name
         Value: !Sub '${AWS::StackName}-VPC'
 
+  # provides inbound/outbound internet traffic for the resources of the VPC e.g. the ELB, the worker nodes etc.
   InternetGateway:
     Type: "AWS::EC2::InternetGateway"
 
@@ -62,6 +52,7 @@ Resources:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
 
+  # route table for the public subnets that contains a rule that allows traffic from/to all of the internet
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -72,6 +63,7 @@ Resources:
       - Key: Network
         Value: Public
 
+  # private route table for private subnet in AZ1 that routes outgoing traffic via NAT-Gateway 1
   PrivateRouteTable01:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -82,6 +74,7 @@ Resources:
       - Key: Network
         Value: Private01
 
+  # private route table for private subnet in AZ2 that routes outgoing traffic via NAT-Gateway 2
   PrivateRouteTable02:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -120,6 +113,7 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGateway02
 
+  # NAT Gateway providing outbound traffic to the internet for nodes within private subnet 1
   NatGateway01:
     DependsOn:
     - NatGatewayEIP1
@@ -133,6 +127,7 @@ Resources:
       - Key: Name
         Value: !Sub '${AWS::StackName}-NatGatewayAZ1'
 
+  # NAT Gateway providing outbound traffic to the internet for nodes within private subnet 2
   NatGateway02:
     DependsOn:
     - NatGatewayEIP2
@@ -146,6 +141,7 @@ Resources:
       - Key: Name
         Value: !Sub '${AWS::StackName}-NatGatewayAZ2'
 
+  # The public elastic IP attached to NAT Gateway 1
   NatGatewayEIP1:
     DependsOn:
     - VPCGatewayAttachment
@@ -153,6 +149,7 @@ Resources:
     Properties:
       Domain: vpc
 
+  # The public elastic IP attached to NAT Gateway 2
   NatGatewayEIP2:
     DependsOn:
     - VPCGatewayAttachment
@@ -160,6 +157,7 @@ Resources:
     Properties:
       Domain: vpc
 
+  # public subnet 1 where e.g. ELB nodes will live
   PublicSubnet01:
     Type: AWS::EC2::Subnet
     Metadata:
@@ -177,6 +175,7 @@ Resources:
       - Key: kubernetes.io/role/elb
         Value: 1
 
+  # public subnet 2 where e.g. ELB nodes will live
   PublicSubnet02:
     Type: AWS::EC2::Subnet
     Metadata:
@@ -194,6 +193,7 @@ Resources:
       - Key: kubernetes.io/role/elb
         Value: 1
 
+  # private subnet1 where the EKS worker nodes will be deployed
   PrivateSubnet01:
     Type: AWS::EC2::Subnet
     Metadata:
@@ -209,7 +209,8 @@ Resources:
         Value: !Sub "${AWS::StackName}-PrivateSubnet01"
       - Key: kubernetes.io/role/internal-elb
         Value: 1
-
+  
+  # private subnet1 where the EKS worker nodes will be deployed
   PrivateSubnet02:
     Type: AWS::EC2::Subnet
     Metadata:

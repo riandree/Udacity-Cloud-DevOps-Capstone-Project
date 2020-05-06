@@ -2,8 +2,7 @@
 
 aws cloudformation create-stack \
        --stack-name todo-webapp \
-       --template-body file://infrastructure.yml \
-       --capabilities CAPABILITY_NAMED_IAM
+       --template-body file://infrastructure.yaml 
 #       --parameters file://parameters.json \
 
 if [[ "$?" == 0 ]]; then
@@ -24,7 +23,7 @@ else
   exit 1
 fi
 
-aws cloudformation create-stack --stack-name todo-webapp-eks --template-body file://amazon-eks-cluster.yaml
+aws cloudformation create-stack --stack-name todo-webapp-eks --template-body file://amazon-eks-cluster.yaml --capabilities CAPABILITY_NAMED_IAM
 
 if [[ "$?" == 0 ]]; then
   echo "Waiting for stack creation to complete ..."

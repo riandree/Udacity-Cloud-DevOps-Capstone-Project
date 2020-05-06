@@ -39,11 +39,59 @@ The following tools need to be available on then jenkins instance :
 
 ![Architecture overview](./doc/archOverview.png)
 
+The app is deployed within it's on VPC which contains two public and two
+private subnets which are assigned to two different Availability Zones
+respectively.
 
+The public subnets will house the ELB-Nodes deployed by the EKS cluster for
+the service of type LoadBalancer that provides the REST-Endpoint to the internet. In addition two NAT-Gateways are deployed to the public subnets
+so that Nodes in the private subnets can access the internet in order to
+update etc.
 
+The REST backend is provided by a containerised Spring Boot application deployed to an EKS managed K8S cluster. The clusters nodes are managed
+by a Node Group that maintains a set of EC2 nodes spinned up in both private
+subnets.
 
+### Cloudformation setup
+The Infrastructure is deployed using Cloud-formation using CF-yml files
+and scripts found in the ***infrastructure*** folder.
 
-The Infrastructure is deployed using Cloud-formation
+Overview of the most important resources declared by the CF-scripts :
+
+- infrastructure.yaml
+   - ToDoDynamoDbTable (AWS::DynamoDB::Table)
+     This is where the ToDo-Items are stored.
+   - StaticResourcesBucket (AWS::S3::Bucket)
+     This is the S3 bucket configured for static web hosting which is
+     used to serve the static resources of the javascript frontend.
+   - CognitoUserPool (AWS::Cognito::UserPool)
+     The AWS Cognito user pool used to manage app users.
+
+- amazon-eks-vpc-private-subnets.yaml
+   - VPC (AWS::EC2::VPC)
+     The VPC where the ToDo app will be hosted
+   - InternetGateway (AWS::EC2::InternetGateway)
+     Provides inbound/outbound internet traffic for the resources of the VPC e.g. the ELB, the worker nodes etc.
+   - PublicRouteTable, PrivateRouteTable01 and PrivateRouteTable02 (AWS::EC2::RouteTable)
+     Route tables for the subnets of the VPC.
+   - NatGateway01 and NatGateway02
+     NAT Gateways providing outbound traffic to the internet for nodes within private subnet 1 and 2.
+   - PublicSubnet01, PublicSubnet01, PrivateSubnet01 and PrivateSubnet02
+     The public and private subnets of the VPC.
+
+- amazon-eks-cluster.yaml
+   - EksServiceRole (AWS::IAM::Role)   
+     This is the Role EKS needs in order to create the Resources for new K8S Clusters
+   - NodeInstanceRole (AWS::IAM::Role)  
+     This is the role the K8S worker nodes need to talk to the control plane and to pull images from ecr etc.
+   - K8SCluster (AWS::EKS::Cluster)
+     Creates the K8S control plane of the K8S cluster
+   - K8SClusterNodegroup (AWS::EKS::Nodegroup) 
+     Creates the node group that creates and maintains the worker nodes for the K8S cluster.
+
+#### Using createInfrastructure.sh and updateInfrastructure.sh to maintain the infrastructure
+ 
+
 
 
 
