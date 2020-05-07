@@ -34,7 +34,7 @@
                               type="primary"  style="float: right; padding: 0.5em" icon="el-icon-delete"/>
                         </div>
                         <div v-for="item in todo.items" :key="item.seq" class="text item">
-                           <el-checkbox>{{ item.name }}</el-checkbox>
+                           <el-checkbox v-model="item.checked" @change="todoChanged(todo)">{{ item.name }}</el-checkbox>
                         </div>
                         <el-input
                             v-model="todo.newItem" 
@@ -97,6 +97,9 @@
                 todoService.deleteOwnToDoById(todo.id)
                       .then(() => todoService.getAllOwnToDos())
                       .then((data) => this.todos = data);
+            },
+            todoChanged(todo) {
+                todoService.updateToDo(todo);
             },
             createItem(todo) {
                 todo.items.push({
