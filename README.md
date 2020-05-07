@@ -35,6 +35,18 @@ The following tools need to be available on then jenkins instance :
 * aws cli
 * kubectl  
 
+### Pipeline steps
+
+* **frontend build** uses yarn to build the static resources for the javascript single page webapp ready to be deployed to S3.
+* **backend build** uses maven to build the spring boot application jar ready to be containerized.
+* **lint docker** uses hadolint to lint the Dockerfile that will be used in the next step to build the Docker image for the backend.
+* **docker** builds the backend Docker image using the Dockerfile ***./backend/Dockerfile*** and tags and pushes the image to AWS ECR.
+* **rolling deploy backend** uses kubectl to initiate a rolling deployment of the new backend container version.
+* **deploy frontend** publishes the static frontend resources from the 'frontend build' step to the static webhosting S3-Bucket. 
+
+#### Rolling Deployment of backend pods.
+
+
 ## Infrastructure setup
 
 ![Architecture overview](./doc/archOverview.png)
