@@ -45,7 +45,7 @@ Resources:
     Properties:
         Name: todoapp
         Version: '1.16'
-        RoleArn: !Ref EksServiceRole
+        RoleArn: !GetAtt EksServiceRole.Arn
         ResourcesVpcConfig:
           SubnetIds:
             - !ImportValue ToDoPublicSubnet01Export
@@ -59,7 +59,7 @@ Resources:
     DependsOn: K8SCluster
     Properties:
       ClusterName: todoapp
-      NodeRole: !Ref NodeInstanceRole
+      NodeRole: !GetAtt NodeInstanceRole.Arn
       ScalingConfig:
         MinSize: 2
         DesiredSize: 3
@@ -70,3 +70,17 @@ Resources:
       Subnets:
         - !ImportValue ToDoPrivateSubnet01Export
         - !ImportValue ToDoPrivateSubnet02Export
+
+Outputs:
+
+  RoleArn:
+    Description: The role that Amazon EKS will use to create AWS resources for Kubernetes clusters
+    Value: !GetAtt EksServiceRole.Arn
+    Export:
+      Name: ToDo-EksServiceRole-RoleArn
+
+  NodeInstanceRole:
+    Description: The node instance role
+    Value: !GetAtt NodeInstanceRole.Arn
+    Export:
+      Name: ToDo-NodeInstanceRole-RoleArn

@@ -89,44 +89,38 @@ Overview of the most important resources declared by the CF-scripts :
    - K8SClusterNodegroup (AWS::EKS::Nodegroup) 
      Creates the node group that creates and maintains the worker nodes for the K8S cluster.
 
-#### Using createInfrastructure.sh and updateInfrastructure.sh to maintain the infrastructure
+#### Using createInfrastructure.sh and updateInfrastructure.sh 
  
+In order to create and update the infrastructure using cloudformation the two scripts createInfrastructure.sh and updateInfrastructure.sh can be used.
+Each script uses the aws cli to create/update the three stacks
+one after the other.
 
+##### configuring kubectl for a new EKS Cluster
 
+After the EKS K8S cluster has been created only the IAM user that created the cluster
+can access the cluster via kubectl.
 
+If the kubectl cli that is used to manage the cluster (e.g. on local dev laptops or on jenkins) 
+should use a different IAM user it is necessary to authorize this IAM accordingly in the cluster :
 
-Project Description
+- determine the IAM user used by the aws cli using : `aws sts get-caller-identity`. The currently active IAM user will be the user accessing the cluster via kubectl after the aws-cli is used to configure kubectl.
+- use the aws cli to configure kubectl to use the created k8s cluster `aws eks --region region-code update-kubeconfig --name <cluster_name>` (cluster_name will be ***todoapp*** for this app)
+- IAM users that are allowed to manage the cluster will be configured using a kubernetes config-map named 'aws-auth'.
+In order to apply this configuration it is necessary to access the cluster using the IAM user that created the cluster. Using this user execute `kubectl describe configmap -n kube-system aws-auth` to check whether this configmap is present (if this is not the case the procedure to create this configmap is documented here : https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html)
+In order to add an IAM user to this configmap the following command can be used to add an IAM user `kubectl edit -n kube-system configmap/aws-auth`. New IAM user that should be allowed to manage the cluster have to be added to the ***mapUsers*** section as in the following example :
 
-
-
-## configuring kubectl for a new EKS Cluster
-
-aws sts get-caller-identity
-
-aws eks --region region-code update-kubeconfig --name cluster_name
---> aws eks --region eu-central-1 update-kubeconfig --name prod
-
-muss vorhanden sein : kubectl describe configmap -n kube-system aws-auth
-
-IAM User zum Cluster hinzufügen :
-rieck5~$ kubectl edit -n kube-system configmap/aws-auth
-
-user einfügen unter 'mapUsers' : 
-
-apiVersion: v1
-data:
-  mapRoles: |
-    - groups:
-      - system:bootstrappers
-      - system:nodes
-      rolearn: arn:aws:iam::277642653139:role/todo-webapp-NodeInstanceRole-60LK21PIZL03
+```
+    apiVersion: v1
+    data:
+    mapRoles: |
+    - rolearn: <ARN of instance role (created by the EksServiceRole cloudformation resource)>
       username: system:node:{{EC2PrivateDNSName}}
-  mapUsers: |
+      groups:
+        - system:bootstrappers
+        - system:nodes
+    mapUsers: |
     - userarn: arn:aws:iam::277642653139:user/jenkins-nanodegree
       username: pipeline
       groups:
         - system:masters
-
---> Jenkins kubectl muss entsprechend konfiguriert werden mittels 
-rieck5~/udacity/Udacity-Cloud-DevOps-Capstone-Project$ aws eks --region eu-central-1 update-kubeconfig --name prod
-während der entsprechende User in der aws cli dort aktiv ist
+```
