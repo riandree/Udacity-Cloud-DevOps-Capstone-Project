@@ -104,7 +104,7 @@ If the kubectl cli that is used to manage the cluster (e.g. on local dev laptops
 should use a different IAM user it is necessary to authorize this IAM accordingly in the cluster :
 
 - determine the IAM user used by the aws cli using : `aws sts get-caller-identity`. The currently active IAM user will be the user accessing the cluster via kubectl after the aws-cli is used to configure kubectl.
-- use the aws cli to configure kubectl to use the created k8s cluster `aws eks --region region-code update-kubeconfig --name <cluster_name>` (cluster_name will be ***todoapp*** for this app)
+- use the aws cli to configure kubectl to use the created k8s cluster `aws eks --region <region-code> update-kubeconfig --name <cluster_name>` (cluster_name will be ***todoapp*** for this app)
 - IAM users that are allowed to manage the cluster will be configured using a kubernetes config-map named 'aws-auth'.
 In order to apply this configuration it is necessary to access the cluster using the IAM user that created the cluster. Using this user execute `kubectl describe configmap -n kube-system aws-auth` to check whether this configmap is present (if this is not the case the procedure to create this configmap is documented here : https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html)
 In order to add an IAM user to this configmap the following command can be used to add an IAM user `kubectl edit -n kube-system configmap/aws-auth`. New IAM user that should be allowed to manage the cluster have to be added to the ***mapUsers*** section as in the following example :
@@ -124,3 +124,5 @@ In order to add an IAM user to this configmap the following command can be used 
       groups:
         - system:masters
 ```
+
+**Using this method the IAM user used by the Jenkins pipeline to deploy resources to the cluster has to be added to the cluster.** 
