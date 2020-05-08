@@ -46,6 +46,12 @@ The following tools need to be available on then jenkins instance :
 
 #### Rolling Deployment of backend pods.
 
+The applications backend is a containerized java Spring-Boot application that provides REST endpoints for the CRUD functions of the Todo-List application.
+In order to be able to easily deploy new versions of this component it is rolled out as a K8S deployment defined in ***k8s/deployment.yml***. 
+After the Jenkins pipeline has build a new Docker image for the backend the pipeline injects the current version of this new image into 'deployment.yml' and uses `kubectl apply -f` on this filtered deployment.yml to rollout the new version.
+Since the Pods of the backend are rolled out as a K8S 'deployment' kubernetes takes care of rolling out new versions in a rolling update fashion (since the 'strategy.type' for this deployment is defined to be "RollingUpdate").
+So as soon as a new version of the backend is to be rolled out when the pipeline execute `kubectl apply -f` K8S will
+start a new pod (for the new version). When this new pod reports to be ready (it's readyness probe as defined for the backend pods reports 'ready') an 'old' pod will be deleted and another 'new' pod will be started. This cycle will repeat until all old pods have been replaced by new pods.
 
 ## Infrastructure setup
 
