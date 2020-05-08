@@ -1,7 +1,7 @@
 # Udacity-Cloud-DevOps-Capstone-Project
 
 As an example a small ToDo-List application called 'Andre´s TODO' has been developed
-which is accessible under [andrerieck.de](http://www.andrerieck.de) 
+which is accessible under [andrerieck.de](http://www.andrerieck.de).
 
 #### Technologies used 
 
