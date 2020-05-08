@@ -37,7 +37,7 @@ The following tools need to be available on then jenkins instance :
 
 ### Pipeline steps
 
-* **frontend build** uses yarn to build the static resources for the javascript single page webapp ready to be deployed to S3.
+* **frontend build** uses the yarn build tool to build the static resources for the javascript single page webapp ready to be deployed to S3.
 * **backend build** uses maven to build the spring boot application jar ready to be containerized.
 * **lint docker** uses hadolint to lint the Dockerfile that will be used in the next step to build the Docker image for the backend.
 * **docker** builds the backend Docker image using the Dockerfile ***./backend/Dockerfile*** and tags and pushes the image to AWS ECR.
