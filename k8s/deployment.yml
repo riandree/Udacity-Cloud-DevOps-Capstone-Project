@@ -11,6 +11,11 @@ spec:
     matchLabels:
       app: todoapp
       stage: test
+  strategy: # Do a rolling Update 
+    type: RollingUpdate   
+    rollingUpdate: 
+      maxUnavailable: 1
+      maxSurge: 1
   template:
     metadata:
       labels:
@@ -28,6 +33,13 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 10
+            failureThreshold: 3
+            periodSeconds: 5
 ---
 apiVersion: v1
 kind: Service
